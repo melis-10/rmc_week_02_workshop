@@ -12,7 +12,17 @@ data_cmnn <- read_csv(here("data", "burden-of-disease-cmnn.csv"))
 
 ```{r}
 # Here render a table for the DALY burden over time for the three countries 
+daly_burden <- data_cmnn%>%select(Entity,Year,`DALYs (Disability-Adjusted Life Years) - Communicable, maternal, neonatal, and nutritional diseases - Sex: Both - Age: Age-standardized (Rate)`)%>%
+  filter(Entity%in% c("Afghanistan", "Albania", "Algeria"))
+
 # You should pivot the data to show each country in a separate column.
+daly_burden_pivoted <- daly_burden%>% 
+pivot_wider(names_from = Entity, values_from = `DALYs (Disability-Adjusted Life Years) - Communicable, maternal, neonatal, and nutritional diseases - Sex: Both - Age: Age-standardized (Rate)`) 
+
+# Render the table
+
+  kable(daly_burden_pivoted,caption = "DALY burden in Afghanistan, Albania, Algeria")
+
 # Use kable() from the knitr package to render the table.
 ```
 
@@ -20,10 +30,21 @@ data_cmnn <- read_csv(here("data", "burden-of-disease-cmnn.csv"))
 
 ```{r}
 # Here, plot a line graph showing the trend of DALY burden for the chosen countries over time. You can use ggplot2 to create this plot. Each country's line should be a different color.
+mel<- pivot_longer(daly_burden_pivoted,cols = -Year, names_to = "country",values_to = "DALY")
+
+ggplot(mel, aes(x = Year, y= DALY, color = country)) +
+geom_line() +
+labs(title = "DALY Burden Over Time",
+       x = "Year",
+       y = "DALY",
+      color = "country")
 ```
 
 ## Summary of CMNN Burden Findings
 
 Provide a brief analysis based on the data presented in the table and chart. Highlight any significant findings or patterns. About 3 sentences.
+```{r}
+#Afghanistan shows a general decreasing trend in DALY burden over the years, starting from 33619.14 in 1990 and dropping to 11651.19 in 2019.
+#In summary, all three countries show a significant decrease in DALY burden over the 30-year period, indicating improvements in health conditions and/or healthcare services.
 
-
+```
